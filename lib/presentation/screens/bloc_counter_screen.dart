@@ -23,11 +23,13 @@ class _CounterBlockView extends StatelessWidget {
   final TextTheme textStyle;
 
   void increaseCounterBy(BuildContext context, {int value = 1}) {
-    context.read<CounterBloc>().add(CounterIncreased(value));
+    // context.read<CounterBloc>().add(CounterIncreased(value));
+    context.read<CounterBloc>().increaseBy(value: value);
   }
 
   void resetCounter(BuildContext context) {
-    context.read<CounterBloc>().add(const CounterReset());
+    // context.read<CounterBloc>().add(const CounterReset());
+    context.read<CounterBloc>().reset();
   }
 
   @override
