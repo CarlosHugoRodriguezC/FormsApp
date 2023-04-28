@@ -48,76 +48,53 @@ class _RegisterView extends StatelessWidget {
   }
 }
 
-class _RegisterForm extends StatefulWidget {
+class _RegisterForm extends StatelessWidget {
   const _RegisterForm();
-
-  @override
-  State<_RegisterForm> createState() => _RegisterFormState();
-}
-
-class _RegisterFormState extends State<_RegisterForm> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  // String username = "";
-  // String email = "";
-  // String password = "";
-
+  // for global key needs to be Stateful widget
+  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final registerCubit = context.watch<RegisterCubit>();
 
+    final username = registerCubit.state.username;
+    final password = registerCubit.state.password;
+
     return Form(
-      key: _formKey,
+      // key: _formKey,
       child: Column(
         children: [
           CustomTextFormField(
             label: 'Nombre de usuario',
-            onChanged: (value) {
-              registerCubit.usernameChanged(value);
-              _formKey.currentState?.validate();
-            },
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'El campo es obligatorio';
-              }
-              if (value.length < 5) {
-                return 'El nombre de usuario debe tener al menos 5 caracteres';
-              }
-              return null;
-            },
+            onChanged: registerCubit.usernameChanged,
+            // _formKey.currentState?.validate();
+            errorMessage: username.errorMessage,
           ),
           const SizedBox(
             height: 10,
           ),
           CustomTextFormField(
-              label: 'Correo electrónico',
-              onChanged: (value) {
-                registerCubit.emailChanged(value);
-                _formKey.currentState?.validate();
-              },
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'El campo es obligatorio';
-                }
-                final emailRegExp = RegExp(
-                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                );
-
-                if (!emailRegExp.hasMatch(value)) {
-                  return 'Correo inválido';
-                }
-
-                return null;
-              }),
+            label: 'Correo electrónico',
+            onChanged: registerCubit.emailChanged,
+            errorMessage: registerCubit.state.email.errorMessage,
+            // onChanged: (value) {
+            //   registerCubit.emailChanged(value);
+            //   // _formKey.currentState?.validate();
+            // },
+          ),
           const SizedBox(
             height: 10,
           ),
           CustomTextFormField(
             label: 'Contraseña',
             obscureText: true,
-            onChanged: (value) {
-              registerCubit.passwordChanged(value);
-              _formKey.currentState?.validate();
-            },
+            onChanged: registerCubit.passwordChanged,
+            errorMessage: password.isPure || password.isValid
+                ? null
+                : 'Contraseña no valida',
+            // onChanged: (value) {
+            //   registerCubit.passwordChanged(value);
+            //   // _formKey.currentState?.validate();
+            // },
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
                 return 'El campo es obligatorio';
@@ -133,10 +110,10 @@ class _RegisterFormState extends State<_RegisterForm> {
           ),
           FilledButton.tonalIcon(
             onPressed: () {
-              final bool isValid = _formKey.currentState!.validate();
-              if (!isValid) {
-                return;
-              }
+              // final bool isValid = _formKey.currentState!.validate();
+              // if (!isValid) {
+              //   return;
+              // }
               registerCubit.onSubmit();
             },
             icon: const Icon(Icons.save),
